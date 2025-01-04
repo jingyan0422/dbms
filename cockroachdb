@@ -42,6 +42,22 @@ SELECT COUNT(*) FROM flexibility_test;
 CREATE USER read_only_user WITH PASSWORD 'password123';
 GRANT SELECT ON TABLE flexibility_test TO read_only_user;
 
+scalability 
+-- Step 1: Take a snapshot of the data before making changes
+SELECT * FROM flexibility_test WHERE name = 'Alice';
+
+-- Step 2: Make a change (this will persist because it's not wrapped in a transaction)
+UPDATE flexibility_test SET age = 35 WHERE name = 'Alice';
+
+-- Step 3: Verify the change
+SELECT * FROM flexibility_test WHERE name = 'Alice'; -- Age should now be 35
+
+-- Step 4: Restore the original value to maintain integrity for future tests
+UPDATE flexibility_test SET age = 30 WHERE name = 'Alice';
+
+-- Step 5: Confirm the data is restored
+SELECT * FROM flexibility_test WHERE name = 'Alice'; -- Age should now be back to 30
+
 -- As the read-only user, test the following:
 -- SELECT * FROM flexibility_test; -- Should work
 -- INSERT INTO flexibility_test (name, age) VALUES ('UnauthorizedUser', 40); -- Should fail
