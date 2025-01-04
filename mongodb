@@ -1,0 +1,40 @@
+// Connect to MongoDB and switch to the testDB database
+use testDB;
+
+// 1. Schema Flexibility Test
+print("Schema Flexibility Test - Inserting documents with varying schemas.");
+db.flexibilityTest.insertMany([
+    { name: "Alice", age: 30 },
+    { name: "Bob", hobbies: ["Reading", "Traveling"] },
+    { name: "Charlie", address: { city: "New York", zip: 10001 } }
+]);
+print("Inserted documents:");
+printjson(db.flexibilityTest.find().toArray());
+
+// 2. Data Integrity Test (Eventual Consistency)
+print("\nData Integrity Test - Demonstrating update.");
+db.dataIntegrity.insert({ _id: 1, value: "Initial" });
+db.dataIntegrity.update({ _id: 1 }, { $set: { value: "Updated" } });
+print("Updated document:");
+printjson(db.dataIntegrity.find({ _id: 1 }).toArray());
+
+// 3. Scalability Test
+print("\nScalability Test - Inserting a large number of documents.");
+for (let i = 0; i < 1000; i++) {
+    db.scalabilityTest.insert({ value: i });
+}
+print("Total documents in scalabilityTest collection:", db.scalabilityTest.count());
+
+// 4. Security Test (Run after enabling access control in MongoDB configuration)
+// Uncomment after enabling authorization
+/*
+db.createUser({
+    user: "readOnlyUser",
+    pwd: "password123",
+    roles: [{ role: "read", db: "testDB" }]
+});
+db.auth("readOnlyUser", "password123");
+print("Authenticated as readOnlyUser.");
+print("Attempting to read data:");
+printjson(db.flexibilityTest.find().toArray());
+*/
