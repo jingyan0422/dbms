@@ -1,0 +1,47 @@
+-- Step 1: Create a test database and table
+CREATE DATABASE testDB;
+USE testDB;
+
+CREATE TABLE flexibility_test (
+    id SERIAL PRIMARY KEY,
+    name STRING NOT NULL,
+    age INT NOT NULL
+);
+
+-- Step 2: Schema Flexibility Test
+-- Insert consistent data into the table
+INSERT INTO flexibility_test (name, age) VALUES ('Alice', 30);
+INSERT INTO flexibility_test (name, age) VALUES ('Bob', 25);
+
+-- Attempt to insert inconsistent data (will fail due to schema enforcement)
+-- INSERT INTO flexibility_test (name) VALUES ('Charlie'); -- Uncomment to test failure
+
+SELECT * FROM flexibility_test;
+
+-- Step 3: Data Integrity Test (ACID Compliance)
+-- Start a transaction, update data, and roll it back
+BEGIN;
+UPDATE flexibility_test SET age = 35 WHERE name = 'Alice';
+ROLLBACK; -- Undo the change
+
+-- Check that data has not changed
+SELECT * FROM flexibility_test WHERE name = 'Alice';
+
+-- Step 4: Scalability Test
+-- Insert multiple rows manually
+INSERT INTO flexibility_test (name, age) VALUES ('User1', 20);
+INSERT INTO flexibility_test (name, age) VALUES ('User2', 22);
+INSERT INTO flexibility_test (name, age) VALUES ('User3', 24);
+-- Repeat or use a script for larger-scale testing
+
+-- Count the total rows in the table
+SELECT COUNT(*) FROM flexibility_test;
+
+-- Step 5: Security Test
+-- Create a read-only user
+CREATE USER read_only_user WITH PASSWORD 'password123';
+GRANT SELECT ON TABLE flexibility_test TO read_only_user;
+
+-- As the read-only user, test the following:
+-- SELECT * FROM flexibility_test; -- Should work
+-- INSERT INTO flexibility_test (name, age) VALUES ('UnauthorizedUser', 40); -- Should fail
