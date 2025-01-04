@@ -1,7 +1,7 @@
-// Connect to MongoDB and switch to the testDB database
+//Connect to MongoDB and switch to the testDB database
 use testDB;
 
-// 1. Schema Flexibility Test
+Step1: Schema Flexibility Test
 print("Schema Flexibility Test - Inserting documents with varying schemas.");
 db.flexibilityTest.insertMany([
     { name: "Alice", age: 30 },
@@ -11,21 +11,21 @@ db.flexibilityTest.insertMany([
 print("Inserted documents:");
 printjson(db.flexibilityTest.find().toArray());
 
-// 2. Data Integrity Test (Eventual Consistency)
+Step2: Data Integrity Test 
 print("\nData Integrity Test - Demonstrating update.");
 db.dataIntegrity.insert({ _id: 1, value: "Initial" });
 db.dataIntegrity.update({ _id: 1 }, { $set: { value: "Updated" } });
 print("Updated document:");
 printjson(db.dataIntegrity.find({ _id: 1 }).toArray());
 
-// 3. Scalability Test
+Step3: Scalability Test
 print("\nScalability Test - Inserting a large number of documents.");
 for (let i = 0; i < 1000; i++) {
     db.scalabilityTest.insert({ value: i });
 }
 print("Total documents in scalabilityTest collection:", db.scalabilityTest.count());
 
-// 4. Security Test (Run after enabling access control in MongoDB configuration)
+Step4: Security Test
 // Uncomment after enabling authorization
 /*
 db.createUser({
